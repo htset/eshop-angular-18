@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eshop-angular-18.Server", "eshop-angular-18.Server\eshop-angular-18.Server.csproj", "{4C748BBA-CFD9-4778-80FA-02F2EF5758F7}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eshop-angular-18.client", "eshop-angular-18.client\eshop-angular-18.client.esproj", "{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C748BBA-CFD9-4778-80FA-02F2EF5758F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C748BBA-CFD9-4778-80FA-02F2EF5758F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C748BBA-CFD9-4778-80FA-02F2EF5758F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C748BBA-CFD9-4778-80FA-02F2EF5758F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D76DE4E0-3792-40CE-B6F2-DBD61EC02467}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1145E1F4-D6DE-4487-93C0-53E5C940204E}
+	EndGlobalSection
+EndGlobal
