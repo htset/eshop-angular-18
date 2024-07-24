@@ -1,6 +1,7 @@
 import { Injectable, } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Item } from './item';
+import { Item } from '../models/item';
+import { ItemPayload } from '../models/itemPayload';
 
 const mock_items = [
   {
@@ -27,9 +28,14 @@ const mock_items = [
 })
 export class ItemService {
 
-  getItems(): Observable<Item[]> {
-    return of(mock_items);
+  getItems(page: number, pageSize: number): Observable<ItemPayload> {
+    let payload: ItemPayload = {
+      items: mock_items.slice((page - 1) * pageSize, page * pageSize),
+      count: mock_items.length
+    }
+    return of(payload);
   }
+
 
   getItem(id: number): Observable<Item> {
     return of(mock_items[id - 1]);

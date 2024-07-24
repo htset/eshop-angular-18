@@ -7,4 +7,8 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\eshop-angular-18.client\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\components\admin\" />
+    <Folder Include="src\app\components\shared\" />
+  </ItemGroup>
 </Project>
