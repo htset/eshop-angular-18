@@ -1,4 +1,7 @@
 
+using eshop_angular_18.Server.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace eshop_angular_18.Server
 {
   public class Program
@@ -13,6 +16,9 @@ namespace eshop_angular_18.Server
       // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
       builder.Services.AddEndpointsApiExplorer();
       builder.Services.AddSwaggerGen();
+
+      var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+      builder.Services.AddDbContext<EshopContext>(x => x.UseSqlServer(connectionString));
 
       var app = builder.Build();
 

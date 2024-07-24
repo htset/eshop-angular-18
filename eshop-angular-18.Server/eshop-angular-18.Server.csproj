@@ -14,6 +14,11 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
       <Version>8.*-*</Version>
     </PackageReference>
+    <PackageReference Include="microsoft.entityframeworkcore.sqlserver" Version="8.0.7" />
+    <PackageReference Include="microsoft.entityframeworkcore.tools" Version="8.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
@@ -21,6 +26,11 @@
     <ProjectReference Include="..\eshop-angular-18.client\eshop-angular-18.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
