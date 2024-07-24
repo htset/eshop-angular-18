@@ -9,13 +9,15 @@ import { ItemDetailsComponent } from './components/public/item-details/item-deta
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { FilterComponent } from './components/shared/filter/filter.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ItemsComponent,
-    ItemDetailsComponent
+    ItemDetailsComponent,
+    FilterComponent
   ],
   imports: [
     BrowserModule,
