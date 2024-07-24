@@ -10,6 +10,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { FilterComponent } from './components/shared/filter/filter.component';
+import { CartComponent } from './components/public/cart/cart.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { FilterComponent } from './components/shared/filter/filter.component';
     AppComponent,
     ItemsComponent,
     ItemDetailsComponent,
-    FilterComponent
+    FilterComponent,
+    CartComponent
   ],
   imports: [
     BrowserModule,

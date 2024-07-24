@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from '../../../services/item.service';
 import { Item } from '../../../models/item';
+import { StoreService } from '../../../services/store.service';
 
 @Component({
   selector: 'app-item-details',
@@ -14,7 +15,9 @@ export class ItemDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private itemService: ItemService
+    private itemService: ItemService,
+    private storeService: StoreService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -30,5 +33,10 @@ export class ItemDetailsComponent implements OnInit {
         })
     }
   }
-  addToCart(): void { }
+
+  addToCart(): void {
+    this.storeService.cart.addItem({ item: this.item, quantity: 1 });
+    this.router.navigate(['/cart']);
+  }
+
 }
