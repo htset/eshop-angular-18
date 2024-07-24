@@ -8,6 +8,8 @@ namespace eshop_angular_18.Server
   {
     public static void Main(string[] args)
     {
+      var allowSpecificOrigins = "angular_eshop_AllowSpecificOrigins";
+
       var builder = WebApplication.CreateBuilder(args);
 
       // Add services to the container.
@@ -20,6 +22,16 @@ namespace eshop_angular_18.Server
       var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
       builder.Services.AddDbContext<EshopContext>(x => x.UseSqlServer(connectionString));
 
+      builder.Services.AddCors(options =>
+      {
+        options.AddPolicy(allowSpecificOrigins,
+            builder =>
+              builder.WithOrigins("http://localhost:4200", "https://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+      });
+
       var app = builder.Build();
 
       app.UseDefaultFiles();
@@ -31,6 +43,8 @@ namespace eshop_angular_18.Server
         app.UseSwagger();
         app.UseSwaggerUI();
       }
+
+      app.UseCors(allowSpecificOrigins);
 
       app.UseHttpsRedirection();
 
