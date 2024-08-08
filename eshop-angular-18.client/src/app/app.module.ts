@@ -8,9 +8,10 @@ import { ItemsComponent } from './components/public/items/items.component';
 import { ItemDetailsComponent } from './components/public/item-details/item-details.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FilterComponent } from './components/shared/filter/filter.component';
 import { CartComponent } from './components/public/cart/cart.component';
+import { LoginComponent } from './components/public/login/login.component';
 
 
 @NgModule({
@@ -19,15 +20,16 @@ import { CartComponent } from './components/public/cart/cart.component';
     ItemsComponent,
     ItemDetailsComponent,
     FilterComponent,
-    CartComponent
+    CartComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
-    FormsModule
-
+    FormsModule,
+    ReactiveFormsModule 
   ],
   providers: [
     provideAnimationsAsync()

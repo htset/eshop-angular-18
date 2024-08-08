@@ -1,4 +1,21 @@
-<div *ngIf="storeService.cart.cartItems.length > 0" align="right">
+@if (!user?.id){
+<div align="right">
+  <a routerLink='login'>Log in</a>
+</div>
+}
+
+@if (storeService.cart.cartItems.length > 0){
+<div align="right">
   <a routerLink='cart'>Cart</a>
 </div>
+}
+
+@if (user?.id){
+  <div align="right">
+    User: {{user?.username}} |
+    <a href="#" (click)="logout($event)">Logout</a>
+  </div>
+}
+
 <router-outlet></router-outlet>
+

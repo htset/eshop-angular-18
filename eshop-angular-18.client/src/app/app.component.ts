@@ -1,26 +1,29 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { StoreService } from './services/store.service';
-
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
+import { AuthenticationService } from './services/authentication.service';
+import { Router } from '@angular/router';
+import { User } from './models/user';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
- 
+export class AppComponent {
+
+  user: User | null = null;
+
   constructor(
+    private router: Router,
+    public authenticationService: AuthenticationService,
     public storeService: StoreService
-  ) { }
+  ) {
+    this.storeService.user$.subscribe(x => this.user = x);
+  }
 
-  ngOnInit() {}
-
-  title = 'eshop-angular-18.client';
+  logout(e: Event) {
+    e.preventDefault();
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
+  }
 }
