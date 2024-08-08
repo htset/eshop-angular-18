@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace eshop_angular_18.Server.Controllers
@@ -28,13 +29,13 @@ namespace eshop_angular_18.Server.Controllers
     }
 
     [HttpPost("authenticate")]
-    public IActionResult Authenticate([FromBody] User formParams)
+    public async Task<IActionResult> Authenticate([FromBody] User formParams)
     {
       if (formParams == null || formParams.Password == null)
         return BadRequest(new { message = "Log in failed" });
 
-      var user = Context.Users
-          .SingleOrDefault(x => x.Username == formParams.Username);
+      var user = await Context.Users
+          .SingleOrDefaultAsync(x => x.Username == formParams.Username);
 
       if (user == null || user.Password == null)
         return BadRequest(new { message = "Log in failed" });
@@ -44,6 +45,10 @@ namespace eshop_angular_18.Server.Controllers
         return BadRequest(new { message = "Log in failed" });
 
       user.Token = CreateToken(user);
+      user.RefreshToken = CreateRefreshToken();
+      user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
+      Context.SaveChanges();
+
       user.Password = null;
 
       return Ok(user);
@@ -73,21 +78,71 @@ namespace eshop_angular_18.Server.Controllers
       var key = Encoding.ASCII.GetBytes(AppSettings.Secret);
       var identity = new ClaimsIdentity(new Claim[]
       {
-             new Claim(ClaimTypes.Role, user.Role)
+        new Claim(ClaimTypes.Role, user.Role)
       });
       var credentials
-          = new SigningCredentials(new SymmetricSecurityKey(key),
-              SecurityAlgorithms.HmacSha256);
+        = new SigningCredentials(new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256);
 
       var tokenDescriptor = new SecurityTokenDescriptor
       {
         Subject = identity,
-        Expires = DateTime.Now.AddMinutes(120),
+        Expires = DateTime.Now.AddMinutes(2),
         SigningCredentials = credentials
       };
 
       var token = jwtTokenHandler.CreateToken(tokenDescriptor);
       return jwtTokenHandler.WriteToken(token);
+    }
+
+    private string CreateRefreshToken()
+    {
+      var randomNum = new byte[64];
+      using (var generator = RandomNumberGenerator.Create())
+      {
+        generator.GetBytes(randomNum);
+        return Convert.ToBase64String(randomNum);
+      }
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] User data)
+    {
+      var user = await Context.Users
+          .SingleOrDefaultAsync(u => (u.RefreshToken == data.RefreshToken)
+              && (u.Token == data.Token));
+
+      if (user == null || DateTime.Now > user.RefreshTokenExpiry)
+        return BadRequest(new { message = "Invalid token" });
+
+      user.Token = CreateToken(user);
+      user.RefreshToken = CreateRefreshToken();
+      user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
+      Context.SaveChanges();
+
+      user.Password = null;
+
+      return Ok(user);
+    }
+
+    [Authorize]
+    [HttpPost("revoke")]
+    public async Task<IActionResult> RevokeToken([FromBody] User data)
+    {
+      var user = await Context.Users
+          .SingleOrDefaultAsync(u => (u.RefreshToken == data.RefreshToken));
+
+      if (user == null || DateTime.Now > user.RefreshTokenExpiry)
+        return BadRequest(new { message = "Invalid token" });
+
+      user.Token = null;
+      user.RefreshToken = null;
+      user.RefreshTokenExpiry = null;
+      Context.SaveChanges();
+
+      user.Password = null;
+
+      return Ok(user);
     }
   }
 }
