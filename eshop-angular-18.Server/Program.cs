@@ -1,6 +1,10 @@
 
+using eshop_angular_18.Server.Helpers;
 using eshop_angular_18.Server.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace eshop_angular_18.Server
 {
@@ -9,7 +13,6 @@ namespace eshop_angular_18.Server
     public static void Main(string[] args)
     {
       var allowSpecificOrigins = "angular_eshop_AllowSpecificOrigins";
-
       var builder = WebApplication.CreateBuilder(args);
 
       // Add services to the container.
@@ -32,6 +35,34 @@ namespace eshop_angular_18.Server
             .AllowCredentials());
       });
 
+      var appSettingsSection = builder.Configuration.GetSection("AppSettings");
+      builder.Services.Configure<AppSettings>(appSettingsSection);
+
+      var appSettings = appSettingsSection.Get<AppSettings>();
+      var key = Encoding.ASCII.GetBytes(appSettings!.Secret);
+
+      builder.Services.AddAuthentication(x =>
+      {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      })
+      .AddJwtBearer(x =>
+      {
+        x.RequireHttpsMetadata = false;
+        x.SaveToken = true;
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(key),
+          ValidateIssuer = false,
+          ValidateAudience = false,
+          RoleClaimType = "role",
+          NameClaimType = "name"
+        };
+        x.MapInboundClaims = false;
+      }
+      );
+
       var app = builder.Build();
 
       app.UseDefaultFiles();
@@ -48,8 +79,8 @@ namespace eshop_angular_18.Server
 
       app.UseHttpsRedirection();
 
+      app.UseAuthentication();
       app.UseAuthorization();
-
 
       app.MapControllers();
 

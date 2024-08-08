@@ -10,5 +10,6 @@
   <ItemGroup>
     <Folder Include="src\app\components\admin\" />
     <Folder Include="src\app\components\shared\" />
+    <Folder Include="src\app\helpers\" />
   </ItemGroup>
 </Project>
