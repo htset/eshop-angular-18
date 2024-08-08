@@ -50,12 +50,12 @@ namespace eshop_angular_18.Server.Controllers
       var jwtTokenHandler = new JwtSecurityTokenHandler();
       var key = Encoding.ASCII.GetBytes(Secret);
       var identity = new ClaimsIdentity(new Claim[]
-          {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-          });
+      {
+        new Claim(ClaimTypes.Role, user.Role)
+      });
       var credentials
-          = new SigningCredentials(new SymmetricSecurityKey(key),
-              SecurityAlgorithms.HmacSha256);
+        = new SigningCredentials(new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256);
 
       var tokenDescriptor = new SecurityTokenDescriptor
       {
