@@ -32,20 +32,12 @@ export class ItemService {
       .set("pageSize", pageSize.toString())
       .set("category", categoriesString);
 
-    return this.http.get<ItemPayload>(this.itemsUrl, { params: params })
-      .pipe(
-        catchError(this.handleError<ItemPayload>('getItems',
-          { items: [], count: 0 }))
-      );
+    return this.http.get<ItemPayload>(this.itemsUrl, { params: params });
   }
 
   getItem(id: number): Observable<Item> {
     const url = `${this.itemsUrl}/${id}`;
-    return this.http.get<Item>(url)
-      .pipe(
-        catchError(this.handleError<Item>(`getItem/${id}`,
-          { id: 0, name: "", price: 0, category: "", description: "" }))
-      );
+    return this.http.get<Item>(url);
   }
 
   handleError<T>(operation = 'operation', result?: T) {

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { StoreService } from './store.service';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { map } from 'rxjs';
 import { User } from '../models/user';
+import { StoreService } from './store.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +32,9 @@ export class AuthenticationService {
       { refreshToken })
       .subscribe();
 
+    this.storeService.cart.emptyCart();
     sessionStorage.removeItem('user');
+
     this.storeService.user = null;
   }
 

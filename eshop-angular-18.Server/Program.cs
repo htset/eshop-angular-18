@@ -4,6 +4,7 @@ using eshop_angular_18.Server.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 namespace eshop_angular_18.Server
@@ -15,6 +16,18 @@ namespace eshop_angular_18.Server
       var allowSpecificOrigins = "angular_eshop_AllowSpecificOrigins";
       var builder = WebApplication.CreateBuilder(args);
 
+      var Configuration = builder.Configuration
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+        .Build();
+
+      Log.Logger = new LoggerConfiguration()
+           .ReadFrom.Configuration(Configuration)
+           .CreateLogger();
+
+      builder.Host.UseSerilog();
+
       // Add services to the container.
 
       builder.Services.AddControllers();
@@ -24,6 +37,8 @@ namespace eshop_angular_18.Server
 
       var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
       builder.Services.AddDbContext<EshopContext>(x => x.UseSqlServer(connectionString));
+
+      builder.Services.AddHttpContextAccessor();
 
       builder.Services.AddCors(options =>
       {
