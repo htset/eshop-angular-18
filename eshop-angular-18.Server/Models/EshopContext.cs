@@ -11,6 +11,7 @@ namespace eshop_angular_18.Server.Models
 
     public DbSet<Item> Items { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,6 +19,4 @@ namespace eshop_angular_18.Server.Models
           p.Price).HasColumnType("decimal(18,2)");
     }
   }
-
-
 }
