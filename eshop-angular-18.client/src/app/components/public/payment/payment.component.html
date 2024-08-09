@@ -1,0 +1,139 @@
+<h2>Payment</h2>
+
+@if(storeService.cart.cartItems.length > 0){
+<div class="card">
+  <div class="card-body" id="cartBody">
+    <h3 class="card-header">Credit card details</h3>
+
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="cardNumber">Credit card no.:</label>
+          <input type="text" class="form-control form-control-sm"
+                 formControlName="cardNumber" />
+          @if(paymentForm.controls['cardNumber'].invalid
+            && (paymentForm.controls['cardNumber'].dirty
+                || paymentForm.controls['cardNumber'].touched)){
+          <div class="text-danger">
+            @if(paymentForm.controls['cardNumber'].errors){
+            <div>
+              Please enter a valid credit card number
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="holderName">Holder's Name:</label>
+          <input type="text" class="form-control form-control-sm"
+                 formControlName="holderName" />
+          @if(paymentForm.controls['holderName'].invalid
+            && (paymentForm.controls['holderName'].dirty
+              || paymentForm.controls['holderName'].touched)){
+          <div class="text-danger">
+            @if(paymentForm.controls['holderName'].errors){
+            <div>
+              Please enter the card holder's name
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-2">
+          <label for="code">CVV Code:</label>
+          <input type="text" class="form-control form-control-sm"
+                 formControlName="code" />
+          @if(paymentForm.controls['code'].invalid
+            && (paymentForm.controls['code'].dirty
+              || paymentForm.controls['code'].touched)){
+          <div class="text-danger">
+            @if(paymentForm.controls['code'].errors){
+            <div>
+              Please enter a valid CVV code
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-sm-1">
+          <label for="expirydate">Expiry date:</label>
+          <select formControlName="expiryMonth"
+                  class="form-control form-control-sm">
+            @for(i of numSequence(12); track i){
+            <option [value]="$index+1">
+              {{$index+1}}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="form-group col-sm-1">
+          <label for="expirydate">&nbsp;</label>
+          <select formControlName="expiryYear"
+                  class="form-control form-control-sm">
+            @for(i of numSequenceStart(5, currentYear); track i){
+            <option [value]="i">
+              {{i}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        @if((paymentForm.controls['expiryMonth'].invalid
+            || paymentForm.controls['expiryYear'].invalid)
+          && (paymentForm.controls['expiryMonth'].dirty
+            || paymentForm.controls['expiryMonth'].touched
+            || paymentForm.controls['expiryYear'].dirty
+            || paymentForm.controls['expiryYear'].touched)){
+        <div class="text-danger">
+          @if(paymentForm.controls['expiryMonth'].errors
+            || paymentForm.controls['expiryYear'].errors){
+          <div>
+            Please enter the card's expiration date
+          </div>
+          }
+        </div>
+        }
+
+        @if((paymentForm.invalid)
+          && (paymentForm.controls['expiryMonth'].dirty
+            || paymentForm.controls['expiryMonth'].touched
+            || paymentForm.controls['expiryYear'].dirty
+            || paymentForm.controls['expiryYear'].touched)){
+        <div class="text-danger">
+          @if(paymentForm.errors){
+          <div>
+            The credit card has expired
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <button type="submit"
+              [disabled]="!paymentForm.valid">
+        Finalize Order
+      </button>
+    </form>
+
+  </div>
+</div>
+}
+
+@if(storeService.cart.cartItems.length == 0){
+<div class="card">
+  <div class="card-body" id="noCartBody">
+    <h3 class="card-header">Cart</h3>
+    Cart is empty
+  </div>
+</div>
+}
+
+<button routerLink="/checkout">Back to Checkout</button>
+<br />

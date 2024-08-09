@@ -3,6 +3,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Filter } from '../models/filter';
 import { Cart } from '../models/cart';
 import { User } from '../models/user';
+import { Order } from '../models/order';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +72,17 @@ export class StoreService {
   set deliveryAddress(val: number) {
     this._deliveryAddress.next(val);
   }  
+
+  private readonly _order = new BehaviorSubject<Order>(new Order());
+  readonly order$ = this._order.asObservable();
+
+  get order(): Order {
+    return this._order.getValue();
+  }
+
+  set order(val: Order) {
+    this._order.next(val);
+  } 
 
   constructor() { }
 }

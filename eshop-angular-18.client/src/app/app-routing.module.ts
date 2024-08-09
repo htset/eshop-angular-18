@@ -8,6 +8,8 @@ import { AdminHomeComponent } from './components/admin/admin-home/admin-home.com
 import { AuthGuard } from './helpers/auth.guard';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { CheckoutComponent } from './components/public/checkout/checkout.component';
+import { PaymentComponent } from './components/public/payment/payment.component';
+import { SummaryComponent } from './components/public/summary/summary.component';
 
 const routes: Routes = [
   { path: '', component: ItemsComponent },
@@ -16,6 +18,8 @@ const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'payment', component: PaymentComponent },
+  { path: 'summary', component: SummaryComponent },  
   {
     path: 'admin', component: AdminHomeComponent,
     canActivate: [AuthGuard],
