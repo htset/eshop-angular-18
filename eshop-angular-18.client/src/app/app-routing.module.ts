@@ -10,6 +10,10 @@ import { AdminUsersComponent } from './components/admin/admin-users/admin-users.
 import { CheckoutComponent } from './components/public/checkout/checkout.component';
 import { PaymentComponent } from './components/public/payment/payment.component';
 import { SummaryComponent } from './components/public/summary/summary.component';
+import { RegistrationComponent } from './components/public/registration/registration.component';
+import { RegistrationConfirmComponent } from './components/public/registration-confirm/registration-confirm.component';
+import { ForgotPasswordComponent } from './components/public/forgot-password/forgot-password.component';
+import { NewPasswordComponent } from './components/public/new-password/new-password.component';
 
 const routes: Routes = [
   { path: '', component: ItemsComponent },
@@ -20,6 +24,10 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'payment', component: PaymentComponent },
   { path: 'summary', component: SummaryComponent },  
+  { path: 'register', component: RegistrationComponent },  
+  { path: 'confirm_registration', component: RegistrationConfirmComponent },  
+  { path: 'forgot_password', component: ForgotPasswordComponent },
+  { path: 'new_password', component: NewPasswordComponent },
   {
     path: 'admin', component: AdminHomeComponent,
     canActivate: [AuthGuard],

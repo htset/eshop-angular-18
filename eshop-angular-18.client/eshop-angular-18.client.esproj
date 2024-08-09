@@ -12,5 +12,6 @@
     <Folder Include="src\app\components\shared\" />
     <Folder Include="src\app\helpers\" />
     <Folder Include="src\app\directives\" />
+    <Folder Include="src\app\validators\" />
   </ItemGroup>
 </Project>

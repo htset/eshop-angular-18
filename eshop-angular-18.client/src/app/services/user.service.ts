@@ -30,6 +30,32 @@ export class UserService {
   deleteAddress(addressId?: number) {
     return this.http.delete<number>(`${environment.apiUrl}/address/${addressId}`);
   }
+
+  addUser(user: User) {
+    return this.http
+      .post<User>(`${environment.apiUrl}/users`, user, this.httpOptions);
+  }
+
+  confirmRegistration(code: string) {
+    return this.http
+      .post<User>(`${environment.apiUrl}/users/confirm_registration`,
+        { code: code }, this.httpOptions);
+  }
+
+  resetPassword(email: string) {
+    return this.http
+      .post<User>(`${environment.apiUrl}/users/reset_password`,
+        { email: email }, this.httpOptions);
+  }
+
+  changePassword(newPassword: string, emailCode: string) {
+    return this.http
+      .post<User>(`${environment.apiUrl}/users/change_password`,
+        { password: newPassword, registrationCode: emailCode },
+        this.httpOptions
+      );
+  }
+
 }
 
 

@@ -1,0 +1,9 @@
+<h3>Registration E-mail Confirmation</h3>
+<p>{{result}}</p>
+<p><button routerLink="/">Go to product list</button></p>
+@if(storeService.cart.cartItems.length > 0
+  && storeService.cart.isCartValid()){
+<p>
+  <button routerLink="/cart">Go to cart</button>
+</p>
+}
