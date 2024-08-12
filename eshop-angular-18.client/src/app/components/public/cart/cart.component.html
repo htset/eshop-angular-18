@@ -44,16 +44,20 @@
     <td>&nbsp;</td>
   </tr>
 </table>
+<br />
+<br />
 <button (click)="emptyCart()" id="empty"
         [disabled]="storeService.cart.cartItems.length == 0">
   Empty Cart
 </button>
+<br />
 <br />
 <button routerLink="/checkout" id="checkout"
         [disabled]="storeService.cart.cartItems.length == 0
            || !storeService.cart.isCartValid()">
   Go to Checkout..
 </button>
+<br />
 <br />
 <button routerLink="">Back to items</button>
 <br />
