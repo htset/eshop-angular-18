@@ -16,6 +16,8 @@ import { ForgotPasswordComponent } from './components/public/forgot-password/for
 import { NewPasswordComponent } from './components/public/new-password/new-password.component';
 import { AdminItemsComponent } from './components/admin/admin-items/admin-items.component';
 import { AdminItemFormComponent } from './components/admin/admin-item-form/admin-item-form.component';
+import { AdminOrdersComponent } from './components/admin/admin-orders/admin-orders.component';
+import { AdminOrderDetailsComponent } from './components/admin/admin-order-details/admin-order-details.component';
 
 const routes: Routes = [
   { path: '', component: ItemsComponent },
@@ -52,6 +54,16 @@ const routes: Routes = [
       {
         path: 'new_item',
         component: AdminItemFormComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'orders',
+        component: AdminOrdersComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'order/:id',
+        component: AdminOrderDetailsComponent,
         canActivate: [AuthGuard]
       }
     ]

@@ -1,23 +1,37 @@
 ﻿using eshop_angular_18.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.EntityFrameworkCore;
 
 namespace eshop_angular_18.Server.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class OrderController : ControllerBase
+  public class OrdersController : ControllerBase
   {
     private readonly EshopContext _context;
 
-    public OrderController(EshopContext context)
+    public OrdersController(EshopContext context)
     {
       _context = context;
+    }
+
+    [EnableQuery]
+    [HttpGet]
+    public IQueryable<Order> GetOrders()
+    {
+      return this._context.Orders
+          .AsQueryable();
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Item>> GetOrder(int id)
     {
-      var order = await this._context.Orders.FindAsync(id);
+      var order = await this._context
+          .Orders
+          .Include(o => o.OrderDetails)
+          .Where(o => o.Id == id)
+          .FirstOrDefaultAsync();
       return Ok(order);
     }
 

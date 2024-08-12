@@ -106,6 +106,43 @@ export class StoreService {
     this._order.next(val);
   }
 
+  private readonly _orders = new BehaviorSubject<Order[]>([]);
+  readonly orders$ = this._orders.asObservable();
+
+  get orders(): Order[] {
+    return this._orders.getValue();
+  }
+
+  set orders(val: Order[]) {
+    this._orders.next(val);
+  }
+
+  private readonly _orderPage = new BehaviorSubject<number>(1);
+  readonly orderPage$ = this._orderPage.asObservable();
+
+  get orderPage(): number {
+    return this._orderPage.getValue();
+  }
+
+  set orderPage(val: number) {
+    this._orderPage.next(val);
+  }
+
+  public orderPageSize: number = 3;
+  public readonly _orderPageSizeSubject = new Subject<number>();
+  public orderPageSizeChanges$ = this._orderPageSizeSubject.asObservable();
+
+  private readonly _orderCount = new BehaviorSubject<number>(1);
+  readonly orderCount$ = this._orderCount.asObservable();
+
+  get orderCount(): number {
+    return this._orderCount.getValue();
+  }
+
+  set orderCount(val: number) {
+    this._orderCount.next(val);
+  }
+
   constructor() { }
 
 }

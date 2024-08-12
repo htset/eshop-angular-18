@@ -1,0 +1,59 @@
+Page size:
+<select [(ngModel)]="storeService.orderPageSize"
+        (change)="onPageSizeChange()" id="pageSize">
+  <option value="3">3</option>
+  <option value="5">5</option>
+  <option value="10">10</option>
+  <option value="50">50</option>
+</select>
+<br />
+Search:
+<input type="text" [(ngModel)]="search"
+       (keyup)="onSearchChange($event)" />
+<br />
+<table class="table table-striped">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>City</th>
+    <th>Date</th>
+    <th>Price</th>
+  </tr>
+
+  @for(order of storeService.orders; track order){
+  <tr>
+    <td>
+      <a routerLink="/admin/order/{{order.id}}">
+        {{order.id}}
+      </a>
+    </td>
+    <td>
+      <a routerLink="/admin/order/{{order.id}}">
+        {{order.firstName + ' ' + order.lastName}}
+      </a>
+    </td>
+    <td>
+      <a routerLink="/admin/order/{{order.id}}">
+        {{order.city}}
+      </a>
+    </td>
+    <td>
+      <a routerLink="/admin/order/{{order.id}}">
+        {{order.orderDate | date:'short':'IST'}}
+      </a>
+    </td>
+    <td>
+      <a routerLink="/admin/order/{{order.id}}">
+        {{order.totalPrice}}
+      </a>
+    </td>
+  </tr>
+  }
+</table>
+
+<ngb-pagination [(page)]="storeService.orderPage"
+                [pageSize]="storeService.orderPageSize"
+                [collectionSize]="storeService.orderCount"
+                (pageChange)="onPageChange($event)">
+</ngb-pagination>
+
