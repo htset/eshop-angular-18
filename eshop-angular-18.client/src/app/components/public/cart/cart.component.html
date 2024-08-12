@@ -8,11 +8,10 @@
     <th>Total Price</th>
     <th>&nbsp;</th>
   </tr>
-  @for(item of storeService.cart.cartItems; track item){
-  <tr>
+  <tr *ngFor="let item of storeService.cart.cartItems">
     <td>
       <a routerLink="/items/{{item.item.id}}">
-        <img src="/angular.svg" width="70px" />
+        <img src="angular.svg" width="70px" />
       </a>
     </td>
     <td>
@@ -27,8 +26,7 @@
     </td>
     <td>
       <input type="number" [(ngModel)]="item.quantity"
-             size="2" id="quantity"
-             appAnalytics events="change blur" />
+             size="2" id="quantity" />
     </td>
     <td>
       <a routerLink="/items/{{item.item.id}}">
@@ -37,32 +35,29 @@
     </td>
     <td>
       <input type="button" (click)="removeFromCart(item)"
-             id="remove" value="Remove"
-             appAnalytics events="click" />
+             id="remove" value="Remove" />
     </td>
   </tr>
-  }
   <tr>
     <td colspan="4">&nbsp;</td>
     <td>{{storeService.cart.getTotalValue()}}</td>
     <td>&nbsp;</td>
   </tr>
 </table>
-<br/>
-<br/>
+<br />
+<br />
 <button (click)="emptyCart()" id="empty"
-        [disabled]="storeService.cart.cartItems.length == 0"
-        appAnalytics events="click">
+        [disabled]="storeService.cart.cartItems.length == 0">
   Empty Cart
 </button>
 <br />
 <br />
 <button routerLink="/checkout" id="checkout"
         [disabled]="storeService.cart.cartItems.length == 0
-              || !storeService.cart.isCartValid()">
+           || !storeService.cart.isCartValid()">
   Go to Checkout..
 </button>
 <br />
-<br/>
+<br />
 <button routerLink="">Back to items</button>
 <br />

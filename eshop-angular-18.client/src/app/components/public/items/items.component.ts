@@ -1,6 +1,5 @@
-import { Component, OnInit, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ItemService } from '../../../services/item.service';
-import { Item } from '../../../models/item';
 import { StoreService } from '../../../services/store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { skip } from 'rxjs';
@@ -12,9 +11,6 @@ import { FilterComponent } from '../../shared/filter/filter.component';
   styleUrl: './items.component.css'
 })
 export class ItemsComponent implements OnInit {
-
-  items:WritableSignal<Item[]> = signal([]);
-  count: WritableSignal<number> = signal(0);
 
   constructor(
     private itemService: ItemService,
@@ -33,7 +29,7 @@ export class ItemsComponent implements OnInit {
       .subscribe(filter => {
         this.storeService.page = 1;
         this.getItems();
-      });  
+      });
 
     this.getItems();
   }
@@ -43,8 +39,8 @@ export class ItemsComponent implements OnInit {
       this.storeService.pageSize,
       this.storeService.filter)
       .subscribe(itemPayload => {
-        this.items.set(itemPayload.items);
-        this.count.set(itemPayload.count);
+        this.storeService.items = itemPayload.items;
+        this.storeService.count = itemPayload.count;
       });
   }
 
@@ -59,6 +55,5 @@ export class ItemsComponent implements OnInit {
 
   openFilter(): void {
     this.modalService.open(FilterComponent);
-  }  
-
+  }
 }

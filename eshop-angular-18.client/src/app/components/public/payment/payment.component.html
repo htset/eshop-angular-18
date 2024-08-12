@@ -65,7 +65,7 @@
           <label for="expirydate">Expiry date:</label>
           <select formControlName="expiryMonth"
                   class="form-control form-control-sm">
-            @for(i of numSequence(12); track i){
+            @for(i of numSequence(12); track $index){
             <option [value]="$index+1">
               {{$index+1}}
             </option>
