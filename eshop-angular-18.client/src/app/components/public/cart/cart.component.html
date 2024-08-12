@@ -8,8 +8,7 @@
     <th>Total Price</th>
     <th>&nbsp;</th>
   </tr>
-  @for(item of storeService.cart.cartItems; track item){
-  <tr>
+  <tr *ngFor="let item of storeService.cart.cartItems">
     <td>
       <a routerLink="/items/{{item.item.id}}">
         <img src="angular.svg" width="70px" />
@@ -44,9 +43,7 @@
     <td>{{storeService.cart.getTotalValue()}}</td>
     <td>&nbsp;</td>
   </tr>
-  }
 </table>
-<br />
 <br />
 <br />
 <button (click)="emptyCart()" id="empty"
@@ -64,4 +61,3 @@
 <br />
 <button routerLink="">Back to items</button>
 <br />
-
