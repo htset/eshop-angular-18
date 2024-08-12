@@ -11,23 +11,39 @@ Page size:
 <br />
 
 <button (click)="openFilter()">Filters</button>
-<br/>
+<br />
 
-<div class="row">
-  <div *ngFor="let item of items();" class="col-sm-3">
-    <div class="card" style="width: 15rem">
-      <div class="card-body">
-        <h5 class="card-title">
-          <a routerLink="/items/{{item.id}}">{{item.name}}</a>
-        </h5>
-        <p class="card-subtitle mb-2 text-muted">${{item.price}}</p>
+@if(storeService.items.length > 0){
+<div class="card-body">
+  <div class="row">
+    @for(item of storeService.items; track item.id){
+    <div class="col-sm-3">
+      <div class="card" style="width: 15rem">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a routerLink="/items/{{item.id}}">
+              {{item.name}}
+              <img src="{{imageUrl}}/{{ (item.images !== undefined && item.images[0] !== undefined)? item.images[0].fileName : '' }}"
+                   height="70px" style="margin:10px" />
+            </a>
+          </h5>
+          <p class="card-subtitle mb-2 text-muted">${{item.price}}</p>
+        </div>
       </div>
     </div>
+    }
   </div>
 </div>
+}
+
+@if(storeService.items.length == 0){
+<div class="card-body">
+  No products were found
+</div>
+}
 
 <ngb-pagination [(page)]="storeService.page"
                 [pageSize]="storeService.pageSize"
-                [collectionSize]="count()"
+                [collectionSize]="storeService.count"
                 (pageChange)="onPageChange($event)">
 </ngb-pagination>

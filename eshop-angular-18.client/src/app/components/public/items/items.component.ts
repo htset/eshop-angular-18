@@ -1,25 +1,25 @@
-import { Component, OnInit, WritableSignal, signal } from '@angular/core';
-import { ItemService } from '../../../services/item.service';
-import { Item } from '../../../models/item';
-import { StoreService } from '../../../services/store.service';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { skip } from 'rxjs';
+import { ItemService } from '../../../services/item.service';
+import { StoreService } from '../../../services/store.service';
+import { skip } from 'rxjs/operators';
 import { FilterComponent } from '../../shared/filter/filter.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-items',
   templateUrl: './items.component.html',
-  styleUrl: './items.component.css'
+  styleUrls: ['./items.component.css']
 })
 export class ItemsComponent implements OnInit {
 
-  items:WritableSignal<Item[]> = signal([]);
-  count: WritableSignal<number> = signal(0);
+  imageUrl: string = environment.imagesUrl;
 
   constructor(
     private itemService: ItemService,
     public storeService: StoreService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit(): void {
     this.storeService.pageSizeChanges$
@@ -33,18 +33,17 @@ export class ItemsComponent implements OnInit {
       .subscribe(filter => {
         this.storeService.page = 1;
         this.getItems();
-      });  
+      });
 
     this.getItems();
   }
 
   getItems(): void {
     this.itemService.getItems(this.storeService.page,
-      this.storeService.pageSize,
-      this.storeService.filter)
+      this.storeService.pageSize, this.storeService.filter)
       .subscribe(itemPayload => {
-        this.items.set(itemPayload.items);
-        this.count.set(itemPayload.count);
+        this.storeService.items = itemPayload.items;
+        this.storeService.count = itemPayload.count;
       });
   }
 
@@ -59,6 +58,5 @@ export class ItemsComponent implements OnInit {
 
   openFilter(): void {
     this.modalService.open(FilterComponent);
-  }  
-
+  }
 }

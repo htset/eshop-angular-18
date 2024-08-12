@@ -1,7 +1,7 @@
 <h3>{{item.name}}</h3>
 <div>
   <div class="row">
-    <div class="col-md-3"><img src="angular.svg" width="200px"></div>
+    <div class="col-md-3"><img src="{{imageLink}}" width="200px" style="margin:10px" /></div>
   </div>
   <div class="row">
     <div class="col-md-3">Description: {{item.description}}</div>
@@ -17,4 +17,15 @@
       <button (click)="addToCart()" id="addToCart">Add to Cart</button>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-3"><button routerLink="/">Back to Items</button></div>
+  </div>
 </div>
+
+@if(!item.id){
+<div class="card-body">
+  <div>There was a problem while retrieving the product page</div>
+
+  <button routerLink="/">Back to Items</button>
+</div>
+}

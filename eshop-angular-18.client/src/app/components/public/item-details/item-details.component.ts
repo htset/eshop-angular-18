@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ItemService } from '../../../services/item.service';
 import { Item } from '../../../models/item';
 import { StoreService } from '../../../services/store.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-item-details',
@@ -11,7 +12,8 @@ import { StoreService } from '../../../services/store.service';
 })
 export class ItemDetailsComponent implements OnInit {
 
-  item:Item = { id: 0, name: "", price: 0, category: "", description: "" };
+  item: Item = { id: 0, name: "", price: 0, category: "", description: "" };
+  imageLink: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -26,12 +28,14 @@ export class ItemDetailsComponent implements OnInit {
 
   getItem(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!isNaN(id)) {
-      this.itemService.getItem(id)
-        .subscribe((item) => {
-          this.item = item;
-        })
-    }
+    this.itemService.getItem(id)
+      .subscribe((item) => {
+        this.item = item;
+        let imagesArray = this.item?.images;
+        if (imagesArray !== undefined)
+          this.imageLink = `${environment.imagesUrl}/`
+            + imagesArray[0]?.fileName + '?' + Math.random();
+      });
   }
 
   addToCart(): void {

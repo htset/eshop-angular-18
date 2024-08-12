@@ -96,7 +96,6 @@ namespace eshop_angular_18.Server.Controllers
           .ToListAsync();
     }
 
-
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] User data)
     {
@@ -138,7 +137,7 @@ namespace eshop_angular_18.Server.Controllers
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<ActionResult<User?>> GetUser(int id)
     {
       var user = await Context.Users.FindAsync(id);

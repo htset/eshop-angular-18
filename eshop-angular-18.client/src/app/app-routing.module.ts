@@ -14,6 +14,8 @@ import { RegistrationComponent } from './components/public/registration/registra
 import { RegistrationConfirmComponent } from './components/public/registration-confirm/registration-confirm.component';
 import { ForgotPasswordComponent } from './components/public/forgot-password/forgot-password.component';
 import { NewPasswordComponent } from './components/public/new-password/new-password.component';
+import { AdminItemsComponent } from './components/admin/admin-items/admin-items.component';
+import { AdminItemFormComponent } from './components/admin/admin-item-form/admin-item-form.component';
 
 const routes: Routes = [
   { path: '', component: ItemsComponent },
@@ -32,7 +34,26 @@ const routes: Routes = [
     path: 'admin', component: AdminHomeComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'users', component: AdminUsersComponent }
+      {
+        path: 'users',
+        component: AdminUsersComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'items',
+        component: AdminItemsComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'item/:id',
+        component: AdminItemFormComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'new_item',
+        component: AdminItemFormComponent,
+        canActivate: [AuthGuard]
+      }
     ]
   },
 
