@@ -11,7 +11,7 @@ Page size:
 <br />
 
 <div class="row">
-  <div *ngFor="let item of items();" class="col-sm-3">
+  <div *ngFor="let item of storeService.items;" class="col-sm-3">
     <div class="card" style="width: 15rem">
       <div class="card-body">
         <h5 class="card-title">
@@ -25,6 +25,6 @@ Page size:
 
 <ngb-pagination [(page)]="storeService.page"
                 [pageSize]="storeService.pageSize"
-                [collectionSize]="count()"
+                [collectionSize]="storeService.count"
                 (pageChange)="onPageChange($event)">
 </ngb-pagination>
