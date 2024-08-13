@@ -1,9 +1,9 @@
 ﻿using eshop_angular_18.Server.Helpers;
 using eshop_angular_18.Server.Models;
+using eshop_angular_18.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,12 +11,12 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-
-namespace eshop_angular_18.Server.Controllers
+namespace my_eshop_api.Controllers
 {
   //********************
   //Helper classes
   //********************
+
   public class RegistrationCode
   {
     public string? Code { get; set; }
@@ -24,7 +24,7 @@ namespace eshop_angular_18.Server.Controllers
 
   public class ResetEmail
   {
-    public string Email { get; set; }
+    public string? Email { get; set; }
   }
 
   [Route("api/users")]
@@ -32,13 +32,13 @@ namespace eshop_angular_18.Server.Controllers
   [ApiController]
   public class UserController : ControllerBase
   {
-    private readonly EshopContext Context;
+    private readonly IUserService Service;
     private readonly AppSettings AppSettings;
 
-    public UserController(EshopContext context,
+    public UserController(IUserService service,
         IOptions<AppSettings> appSettings)
     {
-      Context = context;
+      Service = service;
       AppSettings = appSettings.Value;
     }
 
@@ -49,17 +49,15 @@ namespace eshop_angular_18.Server.Controllers
     [HttpPost("authenticate")]
     public async Task<IActionResult> Authenticate([FromBody] User formParams)
     {
-      if (formParams == null || formParams.Password == null)
+      if (formParams == null || formParams.Username == null)
         return BadRequest(new { message = "Log in failed" });
 
-      var user = await Context.Users
-          .SingleOrDefaultAsync(x => x.Username == formParams.Username);
+      var user = await Service.GetUserByUsername(formParams.Username);
 
       if (user == null || user.Password == null)
         return BadRequest(new { message = "Log in failed" });
 
-      if (!PasswordHasher
-          .VerifyPassword(formParams.Password, user.Password))
+      if (!PasswordHasher.VerifyPassword(formParams.Password, user.Password))
         return BadRequest(new { message = "Log in failed" });
 
       if (user.Status != "Active")
@@ -70,8 +68,8 @@ namespace eshop_angular_18.Server.Controllers
 
       user.Token = CreateToken(user);
       user.RefreshToken = CreateRefreshToken();
-      user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
-      Context.SaveChanges();
+      user.RefreshTokenExpiry = DateTime.Now.AddMinutes(2);
+      await Service.UpdateUser(user);
 
       user.Password = null;
 
@@ -82,26 +80,23 @@ namespace eshop_angular_18.Server.Controllers
     [HttpGet]
     public async Task<ActionResult<List<User>>> GetAllUsers()
     {
-      return await Context.Users
-          .Select(x => new User()
-          {
-            Id = x.Id,
-            FirstName = x.FirstName,
-            LastName = x.LastName,
-            Username = x.Username,
-            Password = null,
-            Role = x.Role,
-            Email = x.Email
-          })
-          .ToListAsync();
+      return await Service.GetUsers();
+    }
+
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User?>> GetUser(int id)
+    {
+      var user = await Service.GetUserById(id);
+      if (user != null)
+        user.Password = null;
+      return user;
     }
 
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] User data)
     {
-      var user = await Context.Users
-          .SingleOrDefaultAsync(u => (u.RefreshToken == data.RefreshToken)
-              && (u.Token == data.Token));
+      var user = await Service.GetUserFromTokens(data.Token, data.RefreshToken);
 
       if (user == null || DateTime.Now > user.RefreshTokenExpiry)
         return BadRequest(new { message = "Invalid token" });
@@ -109,7 +104,7 @@ namespace eshop_angular_18.Server.Controllers
       user.Token = CreateToken(user);
       user.RefreshToken = CreateRefreshToken();
       user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
-      Context.SaveChanges();
+      await Service.UpdateUser(user);
 
       user.Password = null;
 
@@ -120,8 +115,7 @@ namespace eshop_angular_18.Server.Controllers
     [HttpPost("revoke")]
     public async Task<IActionResult> RevokeToken([FromBody] User data)
     {
-      var user = await Context.Users
-          .SingleOrDefaultAsync(u => (u.RefreshToken == data.RefreshToken));
+      var user = await Service.GetUserFromRefreshToken(data.RefreshToken);
 
       if (user == null || DateTime.Now > user.RefreshTokenExpiry)
         return BadRequest(new { message = "Invalid token" });
@@ -129,33 +123,23 @@ namespace eshop_angular_18.Server.Controllers
       user.Token = null;
       user.RefreshToken = null;
       user.RefreshTokenExpiry = null;
-      Context.SaveChanges();
+      await Service.UpdateUser(user);
 
       user.Password = null;
 
       return Ok(user);
     }
 
-    [Authorize]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User?>> GetUser(int id)
-    {
-      var user = await Context.Users.FindAsync(id);
-      if (user != null)
-        user.Password = null;
-      return user;
-    }
-
     [HttpPost]
     [AllowAnonymous]
     public async Task<ActionResult<User>> Register([FromBody] User user)
     {
-      if (await Context.Users.AnyAsync(u => u.Username == user.Username))
+      if ((await Service.GetUserByUsername(user.Username)) != null)
       {
         return BadRequest("Username is already used");
       }
 
-      if (await Context.Users.AnyAsync(u => u.Email == user.Email))
+      if ((await Service.GetUserByEmail(user.Email)) != null)
       {
         return BadRequest("Email is already used");
       }
@@ -165,8 +149,7 @@ namespace eshop_angular_18.Server.Controllers
       user.Status = "Pending";
       user.RegistrationCode = CreateConfirmationToken();
 
-      await Context.Users.AddAsync(user);
-      await Context.SaveChangesAsync();
+      await Service.CreateUser(user);
 
       SendConfirmationEmail(user);
 
@@ -177,7 +160,7 @@ namespace eshop_angular_18.Server.Controllers
     [AllowAnonymous]
     public async Task<ActionResult<User>> ConfirmRegistration([FromBody] RegistrationCode code)
     {
-      var user = await Context.Users.SingleOrDefaultAsync(u => u.RegistrationCode == code.Code);
+      var user = await Service.GetUserByRegistrationCode(code.Code);
       if (user == null)
       {
         return BadRequest("Registration code not found");
@@ -193,7 +176,7 @@ namespace eshop_angular_18.Server.Controllers
       user.RefreshToken = CreateRefreshToken();
       user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
 
-      await Context.SaveChangesAsync();
+      await Service.UpdateUser(user);
 
       user.Password = null;
 
@@ -204,8 +187,7 @@ namespace eshop_angular_18.Server.Controllers
     [AllowAnonymous]
     public async Task<ActionResult<User>> ResetPassword([FromBody] ResetEmail resetEmail)
     {
-      var user = await Context.Users
-        .SingleOrDefaultAsync(u => u.Email == resetEmail.Email);
+      var user = await Service.GetUserByEmail(resetEmail.Email);
       if (user == null)
       {
         return BadRequest("Email not found");
@@ -215,7 +197,7 @@ namespace eshop_angular_18.Server.Controllers
       user.Password = null;
       user.RegistrationCode = CreateConfirmationToken();
 
-      await Context.SaveChangesAsync();
+      await Service.UpdateUser(user);
 
       SendPasswordResetEmail(user);
 
@@ -226,9 +208,7 @@ namespace eshop_angular_18.Server.Controllers
     [AllowAnonymous]
     public async Task<ActionResult<User>> ChangePassword([FromBody] User inputUser)
     {
-      var user = await Context.Users
-        .SingleOrDefaultAsync(u => 
-          u.RegistrationCode == inputUser.RegistrationCode);
+      var user = await Service.GetUserByRegistrationCode(inputUser.RegistrationCode);
 
       if (user == null)
       {
@@ -241,7 +221,7 @@ namespace eshop_angular_18.Server.Controllers
       user.RefreshToken = CreateRefreshToken();
       user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
 
-      await Context.SaveChangesAsync();
+      await Service.UpdateUser(user);
 
       user.Password = null;
 
@@ -257,12 +237,12 @@ namespace eshop_angular_18.Server.Controllers
       var jwtTokenHandler = new JwtSecurityTokenHandler();
       var key = Encoding.ASCII.GetBytes(AppSettings.Secret);
       var identity = new ClaimsIdentity(new Claim[]
-      {
-        new Claim(ClaimTypes.Role, user.Role)
-      });
-      var credentials
-        = new SigningCredentials(new SymmetricSecurityKey(key),
-            SecurityAlgorithms.HmacSha256);
+          {
+                    new Claim(ClaimTypes.Role, user.Role)
+          });
+      var credentials =
+          new SigningCredentials(new SymmetricSecurityKey(key),
+              SecurityAlgorithms.HmacSha256);
 
       var tokenDescriptor = new SecurityTokenDescriptor
       {
@@ -284,7 +264,6 @@ namespace eshop_angular_18.Server.Controllers
         return Convert.ToBase64String(randomNum);
       }
     }
-
     private string CreateConfirmationToken()
     {
       var randomNum = new byte[64];
@@ -292,8 +271,7 @@ namespace eshop_angular_18.Server.Controllers
       {
         generator.GetBytes(randomNum);
         var tempString = Convert.ToBase64String(randomNum);
-        return tempString.Replace("\\", "")
-          .Replace("+", "").Replace("=", "").Replace("/", "");
+        return tempString.Replace("\\", "").Replace("+", "").Replace("=", "").Replace("/", "");
       }
     }
 
@@ -326,8 +304,7 @@ namespace eshop_angular_18.Server.Controllers
       {
         Host = AppSettings.SmtpHost,
         Port = AppSettings.SmtpPort,
-        Credentials = new System.Net
-        .NetworkCredential(AppSettings.SmtpUsername, AppSettings.SmtpPassword),
+        Credentials = new System.Net.NetworkCredential(AppSettings.SmtpUsername, AppSettings.SmtpPassword),
         EnableSsl = true
       };
 
@@ -343,5 +320,6 @@ namespace eshop_angular_18.Server.Controllers
 
       //smtpClient.Send(message);
     }
+
   }
 }

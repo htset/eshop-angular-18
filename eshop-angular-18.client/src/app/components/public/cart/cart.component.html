@@ -12,7 +12,7 @@
   <tr>
     <td>
       <a routerLink="/items/{{item.item.id}}">
-        <img src="/angular.svg" width="70px" />
+        <img src="{{imageUrl}}/{{ (item.item.images !== undefined && item.item.images[0] !== undefined)? item.item.images[0].fileName : '' }}" width="70px"/>
       </a>
     </td>
     <td>

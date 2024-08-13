@@ -1,6 +1,7 @@
 
 using eshop_angular_18.Server.Helpers;
 using eshop_angular_18.Server.Models;
+using eshop_angular_18.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ namespace eshop_angular_18.Server
            .CreateLogger();
 
       builder.Host.UseSerilog();
+
+      builder.Services.AddScoped<IUserService, UserService>();
 
       // Add services to the container.
 

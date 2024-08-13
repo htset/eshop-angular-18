@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CartItem } from "../../../models/cartItem";
 import { StoreService } from "../../../services/store.service";
+import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: 'app-cart',
@@ -8,6 +9,8 @@ import { StoreService } from "../../../services/store.service";
   styleUrls: ['./cart.component.css']
 })
 export class CartComponent implements OnInit {
+
+  imageUrl: string = environment.imagesUrl;
 
   constructor(public storeService: StoreService) { }
 
