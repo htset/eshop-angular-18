@@ -1,4 +1,4 @@
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -63,7 +63,6 @@ import { AdminOrderDetailsComponent } from './components/admin/admin-order-detai
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
     AppRoutingModule,
     NgbModule,
     FormsModule,
@@ -73,6 +72,7 @@ import { AdminOrderDetailsComponent } from './components/admin/admin-order-detai
   ],
   providers: [
     provideAnimationsAsync(),
+    provideHttpClient(),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
